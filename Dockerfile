@@ -1,22 +1,19 @@
-FROM node:20-slim AS builder
+FROM node:20-slim
 WORKDIR /app
 
 # Tizim kutubxonalari
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-# Fayllarni tekshirish uchun (loglarda ko'rinadi)
+# Barcha fayllarni nusxalash (shubhasiz)
 COPY . .
-RUN ls -R  # Bu buyruq bizga barcha papkalarni ko'rsatadi
 
-# Kutubxonalar va Build
+# Kutubxonalarni o'rnatish
 RUN npm install --legacy-peer-deps
+
+# Prisma va Build
 RUN npx prisma generate
 RUN npm run build
 
-# Production
-FROM node:20-slim
-WORKDIR /app
-RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
-COPY --from=builder /app /app
+# Port va Start
 EXPOSE 3000
 CMD ["npm", "start"]
