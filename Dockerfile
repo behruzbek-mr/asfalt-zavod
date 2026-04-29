@@ -1,23 +1,19 @@
 FROM node:20-slim AS builder
 WORKDIR /app
 
-# Tizim kutubxonalarini yangilash
+# Tizim kutubxonalari
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
-# Faqat package.json ni nusxalash
-COPY package.json ./
-
-# Kutubxonalarni o'rnatish (xatoliklarni e'tiborsiz qoldirib)
-RUN npm install --legacy-peer-deps --no-audit
-
-# Qolgan hamma fayllarni nusxalash
+# Fayllarni tekshirish uchun (loglarda ko'rinadi)
 COPY . .
+RUN ls -R  # Bu buyruq bizga barcha papkalarni ko'rsatadi
 
-# Prisma va Build
+# Kutubxonalar va Build
+RUN npm install --legacy-peer-deps
 RUN npx prisma generate
 RUN npm run build
 
-# Production stage
+# Production
 FROM node:20-slim
 WORKDIR /app
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
