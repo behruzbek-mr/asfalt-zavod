@@ -1,20 +1,18 @@
-import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Factory, Menu, X, LogOut } from 'lucide-react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import { useAuthStore } from '../../store/auth';
 import { useStore } from '../../store';
 import LoginPage from '../auth/LoginPage';
-import { Factory, Menu, X, LogOut } from 'lucide-react';
-import { NavLink, useNavigate } from 'react-router-dom';
-import { useTheme } from '../../hooks/useLocalStorage';
 
-const ALL_NAV = [
-  { to: '/', label: 'Boshqaruv paneli' },
+const MOBILE_NAV = [
+  { to: '/', label: 'Boshqaruv' },
   { to: '/sotuv', label: 'Sotuv' },
   { to: '/mijozlar', label: 'Mijozlar' },
   { to: '/haydovchilar', label: 'Haydovchilar' },
-  { to: '/ombor', label: 'Xomashyo / Ombor' },
+  { to: '/ombor', label: 'Ombor' },
   { to: '/xarajatlar', label: 'Xarajatlar' },
   { to: '/ishchilar', label: 'Ishchilar' },
   { to: '/foydalanuvchilar', label: 'Foydalanuvchilar' },
@@ -73,8 +71,9 @@ export default function Layout() {
                                               <X className="w-5 h-5 text-slate-500" />
                                   </button>button>
                         </div>div>
-                        <nav className="flex-1 overflow-y-auto p-3 space-y-1">
-                          {ALL_NAV.map(({ to, label }) => (
+                
+                        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+                          {MOBILE_NAV.map(({ to, label }) => (
                         <NavLink
                                         key={to}
                                         to={to}
@@ -92,6 +91,7 @@ export default function Layout() {
                         </NavLink>NavLink>
                       ))}
                         </nav>nav>
+                
                   {currentUser && (
                       <div className="p-4 border-t border-slate-200 dark:border-dark-700 flex items-center justify-between">
                                   <div className="flex items-center gap-2">
@@ -103,7 +103,10 @@ export default function Layout() {
                                                                 <p className="text-xs text-slate-400 capitalize">{currentUser.role}</p>p>
                                                 </div>div>
                                   </div>div>
-                                  <button onClick={() => { logout(); navigate('/'); }} className="p-2 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
+                                  <button
+                                                  onClick={() => { logout(); navigate('/'); }}
+                                                  className="p-2 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                                >
                                                 <LogOut className="w-5 h-5" />
                                   </button>button>
                       </div>div>
@@ -111,6 +114,7 @@ export default function Layout() {
                 </div>div>
           
                 <Sidebar />
+                
                 <div className="flex flex-col flex-1 overflow-hidden">
                         <Header onOpenMenu={() => setMobileMenuOpen(true)} />
                         <main className="flex-1 overflow-y-auto p-3 md:p-6">
@@ -119,4 +123,5 @@ export default function Layout() {
                 </div>div>
           </div>div>
         );
-}</div>
+}
+</div>
