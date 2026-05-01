@@ -1,19 +1,21 @@
-FROM node:20-slim
+FROM node:22-slim AS builder
 WORKDIR /app
-
-# Tizim kutubxonalari
 RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
-
-# Barcha fayllarni nusxalash (shubhasiz)
+COPY package*.json ./
+RUN npm install
 COPY . .
-
-# Kutubxonalarni o'rnatish
-RUN npm install --legacy-peer-deps
-
-# Prisma va Build
 RUN npx prisma generate
 RUN npm run build
 
-# Port va Start
+FROM node:22-slim
+WORKDIR /app
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
+COPY package*.json ./
+RUN npm install --production
+COPY prisma ./prisma
+RUN npx prisma generate
+COPY server ./server
+COPY --from=builder /app/dist ./dist
 EXPOSE 3000
-CMD ["npm", "start"]
+ENV NODE_ENV=production
+CMD ["node", "--experimental-strip-types", "server/index.ts"]
